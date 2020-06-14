@@ -1,61 +1,62 @@
 from googleapiclient.discovery import build
+import os
 import re
 from datetime import timedelta
 
-api_key = 'AIzaSyDV6ibeWYqQe30Sq1UmkJejRpbIAXNE81M'
+api_key = os.environ.get('YT_api_key')
 
-youtube = build ('youtube', 'v3', developerKey=api_key)
+youtube = build('youtube', 'v3', developerKey=api_key)
 
 nextPageToken = None
 
-hours_pattern = re.compile (r'(\d+)H')
-minutes_pattern = re.compile (r'(\d+)M')
-seconds_pattern = re.compile (r'(\d+)S')
+hours_pattern = re.compile(r'(\d+)H')
+minutes_pattern = re.compile(r'(\d+)M')
+seconds_pattern = re.compile(r'(\d+)S')
 
 total_seconds = 0
 
 while True:
-    pl_request = youtube.playlistItems ().list (
+    pl_request = youtube.playlistItems().list(
         part='contentDetails',
         playlistId='PL-osiE80TeTt2d9bfVyTiXJA-UTHn6WwU',
         maxResults=50,
         pageToken=nextPageToken
     )
 
-    pl_response = pl_request.execute ()
+    pl_response = pl_request.execute()
 
     vid_ids = []
 
     for item in pl_response['items']:
-        vid_ids.append (item['contentDetails']['videoId'])
+        vid_ids.append(item['contentDetails']['videoId'])
 
-    vid_request = youtube.videos ().list (
+    vid_request = youtube.videos().list(
         part='contentDetails',
-        id=','.join (vid_ids)
+        id=','.join(vid_ids)
     )
 
-    vid_response = vid_request.execute ()
+    vid_response = vid_request.execute()
 
     for item in vid_response['items']:
         duration = item['contentDetails']['duration']
 
-        hours = hours_pattern.search (duration)
-        minutes = minutes_pattern.search (duration)
-        seconds = seconds_pattern.search (duration)
+        hours = hours_pattern.search(duration)
+        minutes = minutes_pattern.search(duration)
+        seconds = seconds_pattern.search(duration)
 
-        hours = int (hours.group (1)) if hours else 0
-        minutes = int (minutes.group (1)) if minutes else 0
-        seconds = int (seconds.group (1)) if seconds else 0
+        hours = int(hours.group(1)) if hours else 0
+        minutes = int(minutes.group(1)) if minutes else 0
+        seconds = int(seconds.group(1)) if seconds else 0
 
-        video_seconds = timedelta (
+        video_seconds = timedelta(
             hours=hours,
             minutes=minutes,
             seconds=seconds
-        ).total_seconds ()
+        ).total_seconds()
 
         total_seconds += video_seconds
 
-    nextPageToken = pl_response.get ('nextPageToken')
+    nextPageToken = pl_response.get('nextPageToken')
 
     if not nextPageToken:
         break
