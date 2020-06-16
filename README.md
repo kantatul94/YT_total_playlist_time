@@ -11,4 +11,7 @@ Original Code from Corey can be found from his github account (https://github.co
 
 I don't own a single line from this code. 
 
-With his script I will be sorting my own playlist for my studies. 
+With his script I will be sorting my own playlist for my studies. For example, 
+
+- Currently, I am studing Practical Machine Learning Tutorial by Sentdex (https://www.youtube.com/watch?v=OGxgnH8y2NM&list=PLQVvvaa0QuDfKTOs3Keq_kaG2P55YRn5v)
+- With above script I calculated total playllist time for this series
